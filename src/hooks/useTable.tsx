@@ -15,6 +15,8 @@ export interface UseTableOptions<T> {
   dataProvider?: (params: any) => Promise<{ items: T[]; totalCount: number }>;
   /** Base URL para o endpoint padrão */
   baseUrl?: string;
+  /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
+  renderCell?: (item: T, columnKey: keyof T | "actions", mutate?: any) => React.ReactNode;
   /** Configuração de colunas e visibilidade */
   columns: Column<T>[];
   initialVisibleColumns: (keyof T | "actions")[];

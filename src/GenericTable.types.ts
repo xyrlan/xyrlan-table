@@ -13,11 +13,7 @@ export interface Column<T = any> {
 export interface RenderProps<T> {
   columns: Column[];
   items: T[];
-  renderCell: (
-    item: T,
-    columnKey: keyof T | "actions", // Suporte a "actions"
-    mutate?: () => void
-  ) => ReactNode;
+  renderCell?: (item: T, columnKey: keyof T | "actions", mutate?: any) => React.ReactNode;
 }
 
 // Seleção (checkbox)

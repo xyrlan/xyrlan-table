@@ -14,18 +14,20 @@ import { TableToolbar } from "./components/TableToolbar";
 import { TablePagination } from "./components/TablePagination";
 import { GenericTableProps, Column } from "./GenericTable.types";
 import { Action, State } from "./hooks/useTableState";
+import { defaultRenderCell } from "./utils/renderCell";
 
 type InternalTableProps<T> = GenericTableProps<T> & {
-  state: State;
   visibleColumns?: Set<Key>;
   setVisibleColumns?: (keys: Set<Key>) => void;
   dispatch?: React.Dispatch<Action>;
   debouncedSearch?: (v: string) => void;
   addNewItem?: boolean;
   addNewItemComponent?: React.ReactNode | ((mutate?: () => void) => React.ReactNode);
+  topContent?: React.ReactNode;
+  bottomContent?: React.ReactNode;
 };
 
-export default function GenericTable<T>({
+export default function GenericTable<T extends Record<string, any>>({
   columns,
   items,
   renderCell,
@@ -44,11 +46,13 @@ export default function GenericTable<T>({
   visibleColumns,
   setVisibleColumns,
   dispatch,
-  state,
   debouncedSearch,
   addNewItem,
   addNewItemComponent,
+  topContent,
+  bottomContent,
 }: InternalTableProps<T>) {
+
   const handleSelectionChange = (keys: "all" | Set<Key>) => {
     if (!onSelectionChange) return;
 
@@ -64,42 +68,16 @@ export default function GenericTable<T>({
     }
   };
 
+  const effectiveRenderCell = renderCell ?? defaultRenderCell;
+
   return (
     <section className="space-y-4">
       <Table
         isHeaderSticky
         aria-label="Tabela genérica"
-        bottomContent={
-          totalCount !== undefined &&
-            page !== undefined &&
-            setPage &&
-            rowsPerPage ? (
-            <TablePagination
-              total={totalCount}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              setPage={setPage}
-              selectedKeys={selectedKeys as Set<Key>}
-            />
-          ) : null
-        }
+        bottomContent={bottomContent}
         bottomContentPlacement="outside"
-        topContent={
-          filterableColumns.length > 0 ? (
-            <TableToolbar
-              state={state}
-              filterableColumns={filterableColumns}
-              visibleColumns={visibleColumns}
-              setVisibleColumns={setVisibleColumns as any}
-              dispatch={dispatch}
-              debouncedSearch={debouncedSearch}
-              columns={columns}
-              addNewItem={addNewItem}
-              addNewItemComponent={addNewItemComponent}
-              selectionMode={selectionMode}
-            />
-          ) : null
-        }
+        topContent={topContent}
         topContentPlacement="outside"
         classNames={{ wrapper: "h-full max-h-[600px]" }}
         selectedKeys={selectedKeys}
@@ -129,7 +107,7 @@ export default function GenericTable<T>({
           {(item) => (
             <TableRow key={(item as any).id}>
               {(columnKey) => (
-                <TableCell>{renderCell(item, columnKey as any, mutate)}</TableCell>
+                <TableCell>{effectiveRenderCell(item, columnKey as keyof T, mutate)}</TableCell>
               )}
             </TableRow>
           )}

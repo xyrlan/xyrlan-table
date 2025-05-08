@@ -1,4 +1,3 @@
-export * from "./GenericTable";
-export * from "./GenericTable.types";
-export { default as GenericTable } from "./GenericTable";
-export * from "./hooks/useTable";
+export { default as XyrlanTable } from "./XyrlanTable";
+export { defaultRenderCell } from "./utils/renderCell";
+export type { Column, GenericTableProps } from "./GenericTable.types";
