@@ -1,0 +1,60 @@
+{
+  "name": "xyrlan-table",
+  "version": "1.0.0",
+  "description": "Biblioteca de tabela dinâmica reutilizável para React",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --dts --format esm,cjs",
+    "dev": "tsup src/index.ts --dts --watch --format esm,cjs",
+    "test": "echo \"No tests yet\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xyrlan/xyrlan-table.git"
+  },
+  "keywords": [
+    "react",
+    "table",
+    "component",
+    "datatable",
+    "typescript",
+    "ui"
+  ],
+  "author": "Xyrlan",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xyrlan/xyrlan-table/issues"
+  },
+  "homepage": "https://github.com/xyrlan/xyrlan-table#readme",
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "tailwindcss": "^4.1.5",
+    "framer-motion": "^12.10.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@heroui/system": "^2.4.15",
+    "@heroui/theme": "^2.4.15",
+    "@heroui/button": "^2.2.19",
+    "@heroui/checkbox": "^2.3.18",
+    "@heroui/dropdown": "^2.3.19",
+    "@heroui/input": "^2.4.19",
+    "@heroui/pagination": "^2.2.17",
+    "@heroui/popover": "^2.3.19",
+    "@heroui/progress": "^2.2.15",
+    "@heroui/table": "^2.2.18",
+    "lucide-react": "^0.508.0",
+    "swr": "^2.3.3"
+  }
+}
