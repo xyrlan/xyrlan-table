@@ -16,8 +16,8 @@ const orderColumns = [
 export default function App() {
   return (
     <div className="p-4">
-      <XyrlanTableProvider>
-        <XyrlanTable
+       <XyrlanTableProvider>
+         <XyrlanTable
           columns={orderColumns}
           endpoint="/comments"
           baseUrl="https://jsonplaceholder.typicode.com/"
@@ -31,8 +31,8 @@ export default function App() {
             "actions",
           ]}
         />
-      </XyrlanTableProvider>
-      <p>teste</p>
+       </XyrlanTableProvider>
+      <p className='text-5xl text-green-500'>teste</p>
     </div>
   );
 }

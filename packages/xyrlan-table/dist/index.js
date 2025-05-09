@@ -36,9 +36,6 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/XyrlanTable.tsx
-var import_system = require("@heroui/system");
-
 // src/GenericTable.tsx
 var import_table = require("@heroui/table");
 var import_progress = require("@heroui/progress");
@@ -664,7 +661,7 @@ function useTable({
   };
 }
 
-// src/XyrlanTable.tsx
+// XyrlanTable.tsx
 var import_jsx_runtime6 = require("react/jsx-runtime");
 function XyrlanTable(props) {
   const {
@@ -680,7 +677,7 @@ function XyrlanTable(props) {
     setSortDescriptor,
     mutate
   } = useTable(props);
-  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(import_system.HeroUIProvider, { children: /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
+  return /* @__PURE__ */ (0, import_jsx_runtime6.jsx)(
     GenericTable,
     {
       columns: headerColumns,
@@ -696,14 +693,14 @@ function XyrlanTable(props) {
       mutate,
       renderCell: props.renderCell
     }
-  ) });
+  );
 }
 
 // src/components/XyrlanTableProvider.tsx
-var import_system2 = require("@heroui/system");
+var import_system = require("@heroui/system");
 var import_jsx_runtime7 = require("react/jsx-runtime");
 var XyrlanTableProvider = ({ children }) => {
-  return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_system2.HeroUIProvider, { children });
+  return /* @__PURE__ */ (0, import_jsx_runtime7.jsx)(import_system.HeroUIProvider, { children });
 };
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {

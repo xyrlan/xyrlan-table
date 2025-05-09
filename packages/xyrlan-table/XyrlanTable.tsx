@@ -1,6 +1,6 @@
 import { HeroUIProvider } from "@heroui/system";
-import GenericTable from "./GenericTable";
-import { useTable, UseTableOptions } from "./hooks/useTable";
+import GenericTable from "./src/GenericTable";
+import { useTable, UseTableOptions } from "./src/hooks/useTable";
 
 export default function XyrlanTable<T extends object>(props: UseTableOptions<T>) {
   const {
@@ -18,7 +18,6 @@ export default function XyrlanTable<T extends object>(props: UseTableOptions<T>)
   } = useTable(props);
 
   return (
-    <HeroUIProvider>
       <GenericTable<T>
         columns={headerColumns}
         items={sortedItems}
@@ -33,6 +32,5 @@ export default function XyrlanTable<T extends object>(props: UseTableOptions<T>)
         mutate={mutate}
         renderCell={props.renderCell}
       />
-    </HeroUIProvider>
   );
 }

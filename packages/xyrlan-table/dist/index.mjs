@@ -1,6 +1,3 @@
-// src/XyrlanTable.tsx
-import { HeroUIProvider } from "@heroui/system";
-
 // src/GenericTable.tsx
 import {
   Table,
@@ -633,7 +630,7 @@ function useTable({
   };
 }
 
-// src/XyrlanTable.tsx
+// XyrlanTable.tsx
 import { jsx as jsx6 } from "react/jsx-runtime";
 function XyrlanTable(props) {
   const {
@@ -649,7 +646,7 @@ function XyrlanTable(props) {
     setSortDescriptor,
     mutate
   } = useTable(props);
-  return /* @__PURE__ */ jsx6(HeroUIProvider, { children: /* @__PURE__ */ jsx6(
+  return /* @__PURE__ */ jsx6(
     GenericTable,
     {
       columns: headerColumns,
@@ -665,14 +662,14 @@ function XyrlanTable(props) {
       mutate,
       renderCell: props.renderCell
     }
-  ) });
+  );
 }
 
 // src/components/XyrlanTableProvider.tsx
-import { HeroUIProvider as HeroUIProvider2 } from "@heroui/system";
+import { HeroUIProvider } from "@heroui/system";
 import { jsx as jsx7 } from "react/jsx-runtime";
 var XyrlanTableProvider = ({ children }) => {
-  return /* @__PURE__ */ jsx7(HeroUIProvider2, { children });
+  return /* @__PURE__ */ jsx7(HeroUIProvider, { children });
 };
 export {
   XyrlanTable,
