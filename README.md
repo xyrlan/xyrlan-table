@@ -1,8 +1,8 @@
 # Xyrlan Table
 
-**Xyrlan Table** é uma biblioteca de tabela dinâmica reutilizável para aplicações React com foco em produtividade e integração com APIs baseadas em paginação, ordenação e filtros — ideal para projetos com Next.js, Prisma e SWR.
+**Xyrlan Table** is a reusable dynamic table library for React applications with focus on productivity and integration with APIs based on pagination, sorting and filtering — ideal for Next.js, Prisma and SWR projects.
 
-## ✨ Funcionalidades
+## ✨ Features
 
 - Ordenação por colunas
 - Paginação e controle de página
@@ -15,7 +15,7 @@
 
 ---
 
-## 📦 Instalação
+## 📦 Installation
 
 ```bash
 npm install xyrlan-table
@@ -23,7 +23,7 @@ npm install xyrlan-table
 yarn add xyrlan-table
 ```
 
-## 🧱 Requisitos
+## 🧱 Requirements
 
 ```bash
 npm install react react-dom tailwindcss framer-motion
