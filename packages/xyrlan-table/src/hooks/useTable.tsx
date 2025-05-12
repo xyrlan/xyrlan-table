@@ -12,7 +12,14 @@ export interface UseTableOptions<T> {
   /** Rota a usar com o provedor padrão (default) */
   endpoint: string;
   /** DataProvider customizado (substitui `endpoint`) */
-  dataProvider?: (params: any) => Promise<{ items: T[]; totalCount: number }>;
+  dataProvider?: (params: any) => Promise<{
+    data: T[];
+    paging: {
+      totalCount: number;
+      page: number;
+      pageSize: number;
+    };
+  }>;
   /** Base URL para o endpoint padrão */
   baseUrl?: string;
   /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
@@ -99,14 +106,14 @@ export function useTable<T>({
         addNewItemComponent={addNewItemComponent}
       />
     ), [
-      filterableColumns,
-      visibleColumns,
-      debouncedSearch,
-      selectionMode,
-      addNewItem,
-      addNewItemComponent,
-      mutate,
-    ]
+    filterableColumns,
+    visibleColumns,
+    debouncedSearch,
+    selectionMode,
+    addNewItem,
+    addNewItemComponent,
+    mutate,
+  ]
   );
 
   const bottomContent = useMemo(

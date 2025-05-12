@@ -23,13 +23,11 @@ export function useTableData<T>(opts: {
     ? customProvider
     : createDefaultDataProvider<T>(endpoint!, baseUrl);
 
-console.log("Provider:", provider);
-
   const key = ["table-data",
     page, perPage, sortDescriptor, filterParams, searchParam
   ];
 
-  const { data, error, mutate, isValidating } = useSWR(
+  const { data: result, error, mutate, isValidating } = useSWR(
     key,
     () => provider({
       page,
@@ -43,10 +41,10 @@ console.log("Provider:", provider);
       searchFields,
     } as QueryParams)
   );
-  console.log(data);
+  console.log(result);
   return {
-    items: data?.items ?? [] as T[],
-    totalCount: data?.totalCount ?? 0,
+    items: result?.data ?? [] as T[],
+    totalCount: result?.paging?.totalCount ?? 0,
     isLoading: isValidating,
     error,
     mutate,

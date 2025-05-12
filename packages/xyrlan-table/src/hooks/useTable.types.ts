@@ -14,8 +14,12 @@ export interface QueryParams {
 
 /** O que o provedor deve devolver */
 export interface DataResponse<T> {
-  items: T[];
-  totalCount: number;
+  data: T[];
+  paging: {
+    totalCount: number;
+    page: number;
+    pageSize: number;
+  };
 }
 
 /** Assinatura do provedor de dados */
