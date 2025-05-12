@@ -79,17 +79,17 @@ export default function IndexPage() {
 
 ## 🧱 Props
 
-| Prop                    | Type                                                                         | Default                       | Description                            |
-| ----------------------- | ---------------------------------------------------------------------------- | ----------------------------- | -------------------------------------- |
-| `endpoint`              | string                                                                       | **Required**                  | API endpoint for default data provider |
-| `columns`               | `Column<T>[]`                                                                | **Required**                  | Column definitions                     |
-| `initialVisibleColumns` | `(keyof T   "actions")[]`                                                    | **Required**                  | Initially visible columns              |
-| `searchFields`          | `(keyof T)[]`                                                                | **Required**                  | Fields for full-text search            |
-| `dataProvider`          | `(params: any) => Promise<{ items: T[]; totalCount: number }>`               | Optional                      | Custom data fetching function          |
-| `baseUrl`               | string                                                                       | `process.env.NEXT_PUBLIC_URL` | Base URL for API requests              |
-| `renderCell`            | `(item: T, columnKey: keyof T | "actions", mutate?: any) => React.ReactNode` | Optional                      | Custom cell renderer                   |
-| `addNewItem`            | boolean                                                                      | Optional                      | Show "Add New" button                  |
-| `addNewItemComponent`   | `React.ReactNode | ((mutate: any) => React.ReactNode)`                       | Optional                      | Custom "Add New" component             |
+| Prop                    | Type                                                                                | Default                       | Description                            |
+| ----------------------- | ----------------------------------------------------------------------------------- | ----------------------------- | -------------------------------------- |
+| `endpoint`              | string                                                                              | **Required**                  | API endpoint for default data provider |
+| `columns`               | `Column<T>[]`                                                                       | **Required**                  | Column definitions                     |
+| `initialVisibleColumns` | `(keyof T   "actions")[]`                                                           | **Required**                  | Initially visible columns              |
+| `searchFields`          | `(keyof T)[]`                                                                       | **Required**                  | Fields for full-text search            |
+| `baseUrl`               | string                                                                              | `process.env.NEXT_PUBLIC_URL` | Base URL for API requests              |
+| `dataProvider`          | `(params: any) => Promise<{ items: T[]; totalCount: number }>`                      | Optional                      | Custom data fetching function          |
+| `renderCellMap`         | ` Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React.ReactNode>>` | Optional                      | Custom cell renderer                   |
+| `addNewItem`            | boolean                                                                             | Optional                      | Show "Add New" button                  |
+| `addNewItemComponent`   | `React.ReactNode | ((mutate: any) => React.ReactNode)`                              | Optional                      | Custom "Add New" component             |
 
 // data handling 
 ## Data Handling
