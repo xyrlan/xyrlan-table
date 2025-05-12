@@ -48,8 +48,12 @@ interface UseTableOptions<T> {
     endpoint: string;
     /** DataProvider customizado (substitui `endpoint`) */
     dataProvider?: (params: any) => Promise<{
-        items: T[];
-        totalCount: number;
+        data: T[];
+        paging: {
+            totalCount: number;
+            page: number;
+            pageSize: number;
+        };
     }>;
     /** Base URL para o endpoint padrão */
     baseUrl?: string;

@@ -318,7 +318,6 @@ function useTableData(opts) {
     searchFields
   } = opts;
   const provider = customProvider ? customProvider : createDefaultDataProvider(endpoint, baseUrl);
-  console.log("Provider:", provider);
   const key = [
     "table-data",
     page,
@@ -327,7 +326,7 @@ function useTableData(opts) {
     filterParams,
     searchParam
   ];
-  const { data, error, mutate, isValidating } = (0, import_swr.default)(
+  const { data: result, error, mutate, isValidating } = (0, import_swr.default)(
     key,
     () => provider({
       page,
@@ -341,10 +340,10 @@ function useTableData(opts) {
       searchFields
     })
   );
-  console.log(data);
+  console.log(result);
   return {
-    items: data?.items ?? [],
-    totalCount: data?.totalCount ?? 0,
+    items: result?.data ?? [],
+    totalCount: result?.paging?.totalCount ?? 0,
     isLoading: isValidating,
     error,
     mutate
