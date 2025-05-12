@@ -23,6 +23,23 @@ npm install xyrlan-table
 yarn add xyrlan-table
 ```
 
+## ✨ Features
+
+✅ Ordenação por coluna
+
+✅ Paginação automática
+
+✅ Busca global e filtros
+
+✅ Suporte a seleção múltipla
+
+✅ Renderização customizada de células
+
+✅ Integração com qualquer API REST
+
+✅ Compatível com Next.js
+
+
 ## 🧱 Requisitos
 
 ```bash
@@ -30,122 +47,94 @@ npm install react react-dom tailwindcss framer-motion
 ```
 Configure também o TailwindCSS e envolva sua aplicação com o HeroUIProvider:
 
+## 🧱 Basic Usage
 
-🧱 Requisitos
-Certifique-se de configurar o TailwindCSS e envolver sua aplicação com o HeroUIProvider.
+```
+import { XyrlanTable } from 'xyrlan-table';
+import DefaultLayout from "@/layouts/default";
 
-tailwind.config.js
-js
-Copiar
-Editar
-module.exports = {
-  content: ["./src/**/*.{js,ts,jsx,tsx}"],
-  theme: { extend: {} },
-  plugins: [],
-};
-No seu App:
-tsx
-Copiar
-Editar
-import { HeroUIProvider } from "@heroui/system";
+export default function IndexPage() {
+  const columns = [
+    { name: "ID", uid: "id" },
+    { name: "Post ID", uid: "postId", sortable: true },
+    { name: "Name", uid: "name" },
+    { name: "Email", uid: "email" },
+    { name: "Body", uid: "body" },
+    { name: "Ações", uid: "actions" },
+  ];
 
-function App() {
   return (
-    <HeroUIProvider>
-      <YourAppRoutes />
-    </HeroUIProvider>
+    <DefaultLayout>
+      <XyrlanTable
+        baseUrl="https://jsonplaceholder.typicode.com"
+        columns={columns}
+        endpoint="/comments"
+        initialVisibleColumns={["id", "postId", "name", "email", "body", "actions"]}
+        searchFields={["name", "email"]}
+      />
+    </DefaultLayout>
   );
 }
-✅ Exemplo básico
-tsx
-Copiar
-Editar
-import { XyrlanTable } from "xyrlan-table";
+```
 
-const columns = [
-  { key: "name", label: "Nome" },
-  { key: "email", label: "Email" },
-];
+## 🧱 Props
 
-export default function Example() {
-  return (
-    <XyrlanTable
-      endpoint="/api/companies"
-      columns={columns}
-      initialVisibleColumns={["name", "email"]}
-      searchFields={["name", "email"]}
-    />
-  );
-}
-🔌 Formato da API esperada
-A API que alimenta a tabela deve retornar dados no seguinte formato:
+| Prop                    | Type                                                                         | Default                       | Description                            |
+| ----------------------- | ---------------------------------------------------------------------------- | ----------------------------- | -------------------------------------- |
+| `endpoint`              | string                                                                       | **Required**                  | API endpoint for default data provider |
+| `dataProvider`          | `(params: any) => Promise<{ items: T[]; totalCount: number }>`               | Optional                      | Custom data fetching function          |
+| `baseUrl`               | string                                                                       | `process.env.NEXT_PUBLIC_URL` | Base URL for API requests              |
+| `renderCell`            | `(item: T, columnKey: keyof T | "actions", mutate?: any) => React.ReactNode` | Optional                      | Custom cell renderer                   |
+| `columns`               | `Column<T>[]`                                                                | **Required**                  | Column definitions                     |
+| `initialVisibleColumns` | `(keyof T | "actions")[]`                                                    | **Required**                  | Initially visible columns              |
+| `searchFields`          | `(keyof T)[]`                                                                | **Required**                  | Fields for full-text search            |
+| `addNewItem`            | boolean                                                                      | Optional                      | Show "Add New" button                  |
+| `addNewItemComponent`   | `React.ReactNode | ((mutate: any) => React.ReactNode)`                       | Optional                      | Custom "Add New" component             |
 
-json
-Copiar
-Editar
+// data handling 
+## Data Handling
+
+The component sends requests with the following query parameters structure:
+```
 {
-  "data": [
-    { "id": 1, "name": "Empresa 1", "email": "empresa1@email.com" },
-    ...
-  ],
-  "paging": {
-    "totalCount": 42,
-    "page": 1,
-    "pageSize": 10
+  queryCriteria: {
+    page: number,
+    pageSize: number,
+    orderBy: Record<string, 'asc' | 'desc'>,
+    includes: Record<string, boolean>,
+    params: Record<string, any>
   }
 }
-⚙️ Props disponíveis (UseTableOptions<T>)
-Propriedade	Tipo	Descrição
-endpoint	string	Rota da API para o provedor padrão
-dataProvider	(params) => Promise<{ items: T[], totalCount: number }>	Provider customizado opcional
-baseUrl	string	Base da URL (padrão: process.env.NEXT_PUBLIC_URL)
-renderCell	(item, columnKey, mutate) => ReactNode	Personalização de células
-columns	Column<T>[]	Colunas da tabela
-initialVisibleColumns	`(keyof T	"actions")[]`
-searchFields	(keyof T)[]	Campos usados na busca textual
-addNewItem	boolean	Exibir botão de "novo item"
-addNewItemComponent	`ReactNode	(mutate) => ReactNode`
+```
 
-🧠 Exemplo de uso com renderização customizada
-tsx
-Copiar
-Editar
-<XyrlanTable
-  endpoint="/api/companies"
-  columns={[
-    { key: "name", label: "Nome" },
-    { key: "email", label: "Email" },
-    { key: "actions", label: "Ações" },
-  ]}
-  initialVisibleColumns={["name", "email", "actions"]}
-  searchFields={["name", "email"]}
-  renderCell={(item, columnKey) => {
-    if (columnKey === "actions") {
-      return <button onClick={() => alert(item.id)}>Editar</button>;
+Example Next.js API handler with Next.js + Prisma:
+```
+export async function GET(request: NextRequest) {
+  const queryCriteria = JSON.parse(request.nextUrl.searchParams.get("queryCriteria") || "{}");
+  
+  const page = queryCriteria.page || 1;
+  const pageSize = queryCriteria.pageSize || 10;
+  const skip = (page - 1) * pageSize;
+
+  // Your data fetching logic here
+  const [data, total] = await Promise.all([ 
+    prisma.entity.findMany({
+      where: queryCriteria.params,
+      take: pageSize,
+      skip,
+      orderBy: queryCriteria.orderBy,
+      include: queryCriteria.includes,
+    }),
+    prisma.entity.count({ where: queryCriteria.params })
+  ]);
+
+  return NextResponse.json({
+    data,
+    paging: {
+      totalCount: total,
+      page,
+      pageSize
     }
-    return item[columnKey];
-  }}
-/>
-📦 Build
-A biblioteca é empacotada com tsup:
-
-bash
-Copiar
-Editar
-npm run build
-📄 Licença
-MIT © Xyrlan
-
-yaml
-Copiar
-Editar
-
----
-
-Este `README.md` já está formatado para o GitHub, com destaque de código e uma seção completa de documentação. Deseja que eu te ajude a publicar no npm agora?
-
-
-
-
-
-
+  });
+}
+```
