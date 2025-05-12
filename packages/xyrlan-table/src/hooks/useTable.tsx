@@ -7,10 +7,23 @@ import { useSorting } from "../hooks/useSorting";
 import { TableToolbar } from "../components/TableToolbar";
 import { TablePagination } from "../components/TablePagination";
 import { Column } from "../GenericTable.types";
+import { QueryParamsBuilder } from "../utils/queryHelper";
 
 export interface UseTableOptions<T> {
+  /** Configuração de colunas e visibilidade */
+  columns: Column<T>[];
+  initialVisibleColumns: (keyof T | "actions")[];
+  /** Campos para busca full-text */
+  searchFields: (keyof T & string)[];
   /** Rota a usar com o provedor padrão (default) */
   endpoint: string;
+  /** Base URL para o endpoint padrão */
+  baseUrl?: string;
+  /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
+  renderCellMap?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React.ReactNode>>;
+  /** Adicionar botão de "novo item" */
+  addNewItem?: boolean;
+  addNewItemComponent?: React.ReactNode | ((mutate: any) => React.ReactNode);
   /** DataProvider customizado (substitui `endpoint`) */
   dataProvider?: (params: any) => Promise<{
     data: T[];
@@ -20,24 +33,12 @@ export interface UseTableOptions<T> {
       pageSize: number;
     };
   }>;
-  /** Base URL para o endpoint padrão */
-  baseUrl?: string;
-  /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
-  renderCellMap?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React.ReactNode>>;
-  /** Configuração de colunas e visibilidade */
-  columns: Column<T>[];
-  initialVisibleColumns: (keyof T | "actions")[];
-  /** Campos para busca full-text */
-  searchFields: (keyof T)[];
-  /** Adicionar botão de "novo item" */
-  addNewItem?: boolean;
-  addNewItemComponent?: React.ReactNode | ((mutate: any) => React.ReactNode);
 }
 
 export function useTable<T>({
   endpoint,
   dataProvider: customProvider,
-  baseUrl,
+  baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "",
   columns,
   initialVisibleColumns,
   searchFields,
@@ -63,19 +64,42 @@ export function useTable<T>({
     dispatch({ type: "SET_PAGE", payload: 1 });
   }, 500);
 
+
+  const queryCriteria = useMemo(() => {
+    const params = QueryParamsBuilder.buildQueryParams(
+      Object.entries(state.filterParams).map(([field, value]) => ({
+        field,
+        value,
+      })),
+      state.filterValue
+        ? { contains: state.filterValue.toLowerCase() }
+        : undefined,
+      searchFields,
+    );
+
+    return {
+      page: state.page,
+      pageSize: state.rowsPerPage,
+      orderBy: state.sortDescriptor
+        ? {
+          [state.sortDescriptor.column]:
+            state.sortDescriptor.direction === "ascending" ? "asc" : "desc",
+        }
+        : undefined,
+      params,
+    };
+  }, [
+    state.filterParams,
+    state.filterValue,
+    state.page,
+    state.rowsPerPage,
+    state.sortDescriptor,
+    searchFields,
+  ]);
+
   // 3) Busca de dados via SWR / defaultDataProvider ou customProvider
   const { items, totalCount, isLoading, mutate } = useTableData<T>({
-    endpoint,
-    customProvider,
-    baseUrl,
-    page: state.page,
-    perPage: state.rowsPerPage,
-    sortDescriptor: state.sortDescriptor,
-    filterParams: Object.entries(state.filterParams).map(([field, value]) => ({ field, value })),
-    searchParam: state.filterValue
-      ? { contains: state.filterValue.toLowerCase() }
-      : undefined,
-    searchFields: searchFields as string[],
+    url: `${baseUrl}${endpoint}?queryCriteria=${JSON.stringify(queryCriteria)}`,
   });
 
   // 4) Ordenação cliente (caso queira override) ou manter ordem do servidor

@@ -277,64 +277,29 @@ function useTableState(columns, initialVisibleColumns) {
 // src/hooks/useTableData.tsx
 var import_swr = __toESM(require("swr"));
 
-// src/hooks/defaultDataProvider.ts
-function createDefaultDataProvider(endpoint, baseUrl = "") {
-  if (!endpoint) throw new Error("Endpoint is required.");
-  return async (params) => {
-    const url = new URL(`${baseUrl}${endpoint}`);
-    url.searchParams.append("page", params.page.toString());
-    url.searchParams.append("perPage", params.perPage.toString());
-    if (params.sort) {
-      url.searchParams.append("sortBy", params.sort.column);
-      url.searchParams.append("sortOrder", params.sort.direction);
+// src/utils/fetcher.ts
+var fetcher = async (url) => {
+  const response = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json"
     }
-    try {
-      const res = await fetch(url.toString());
-      if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
-      const json = await res.json();
-      return json;
-    } catch (err) {
-      console.error("Data fetch error:", err);
-      return { data: [], paging: { totalCount: 0, page: 1, pageSize: 10 } };
-    }
-  };
-}
+  });
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+};
 
 // src/hooks/useTableData.tsx
 function useTableData(opts) {
   const {
-    endpoint,
-    customProvider,
-    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "",
-    page,
-    perPage,
-    sortDescriptor,
-    filterParams,
-    searchParam,
-    searchFields
+    url,
+    customProvider
   } = opts;
-  const provider = customProvider ? customProvider : createDefaultDataProvider(endpoint, baseUrl);
-  const key = [
-    "table-data",
-    page,
-    perPage,
-    sortDescriptor,
-    filterParams,
-    searchParam
-  ];
   const { data: result, error, mutate, isValidating } = (0, import_swr.default)(
-    key,
-    () => provider({
-      page,
-      perPage,
-      sort: {
-        column: sortDescriptor.column,
-        direction: sortDescriptor.direction === "ascending" ? "asc" : "desc"
-      },
-      filterParams,
-      searchParam,
-      searchFields
-    })
+    url,
+    fetcher
   );
   console.log(result);
   return {
@@ -494,12 +459,73 @@ function TablePagination({
   ] });
 }
 
+// src/utils/queryHelper.tsx
+var QueryParamsBuilder = class {
+  static buildFilterParams(filterParams) {
+    return filterParams.reduce((acc, item) => {
+      if (item.field.includes("_")) {
+        const keys = item.field.split("_");
+        let currentLevel = acc;
+        keys.forEach((key, index) => {
+          if (index === keys.length - 1) {
+            if (Array.isArray(item.value)) {
+              currentLevel[key] = { in: item.value };
+            } else {
+              currentLevel[key] = item.value;
+            }
+          } else {
+            currentLevel[key] = currentLevel[key] || {};
+            currentLevel = currentLevel[key];
+          }
+        });
+      } else {
+        if (Array.isArray(item.value)) {
+          acc[item.field] = { in: item.value };
+        } else {
+          acc[item.field] = item.value;
+        }
+      }
+      return acc;
+    }, {});
+  }
+  static buildSearchParam(searchParam) {
+    return { ...searchParam, mode: "insensitive" };
+  }
+  static buildSearchFields(searchFields, searchParam) {
+    return searchFields.map((field) => {
+      const keys = field.split("_");
+      let condition = { contains: searchParam.contains, mode: "insensitive" };
+      for (let i = keys.length - 1; i >= 0; i--) {
+        condition = { [keys[i]]: condition };
+      }
+      return condition;
+    });
+  }
+  static buildQueryParams(filterParams, searchParam, searchFields) {
+    const conditions = [];
+    if (searchParam) {
+      if (!searchFields || searchFields.length === 0) {
+        throw new Error(
+          "searchFields must be provided when searchParam is used."
+        );
+      }
+      const orConditions = this.buildSearchFields(searchFields, searchParam);
+      conditions.push({ OR: orConditions });
+    }
+    if (filterParams) {
+      const filters = this.buildFilterParams(filterParams);
+      conditions.push(filters);
+    }
+    return conditions.length > 1 ? { AND: conditions } : conditions[0] || {};
+  }
+};
+
 // src/hooks/useTable.tsx
 var import_jsx_runtime5 = require("react/jsx-runtime");
 function useTable({
   endpoint,
   dataProvider: customProvider,
-  baseUrl,
+  baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "",
   columns,
   initialVisibleColumns,
   searchFields,
@@ -521,16 +547,33 @@ function useTable({
     dispatch({ type: "SET_FILTER_VALUE", payload: value });
     dispatch({ type: "SET_PAGE", payload: 1 });
   }, 500);
-  const { items, totalCount, isLoading, mutate } = useTableData({
-    endpoint,
-    customProvider,
-    baseUrl,
-    page: state.page,
-    perPage: state.rowsPerPage,
-    sortDescriptor: state.sortDescriptor,
-    filterParams: Object.entries(state.filterParams).map(([field, value]) => ({ field, value })),
-    searchParam: state.filterValue ? { contains: state.filterValue.toLowerCase() } : void 0,
+  const queryCriteria = (0, import_react4.useMemo)(() => {
+    const params = QueryParamsBuilder.buildQueryParams(
+      Object.entries(state.filterParams).map(([field, value]) => ({
+        field,
+        value
+      })),
+      state.filterValue ? { contains: state.filterValue.toLowerCase() } : void 0,
+      searchFields
+    );
+    return {
+      page: state.page,
+      pageSize: state.rowsPerPage,
+      orderBy: state.sortDescriptor ? {
+        [state.sortDescriptor.column]: state.sortDescriptor.direction === "ascending" ? "asc" : "desc"
+      } : void 0,
+      params
+    };
+  }, [
+    state.filterParams,
+    state.filterValue,
+    state.page,
+    state.rowsPerPage,
+    state.sortDescriptor,
     searchFields
+  ]);
+  const { items, totalCount, isLoading, mutate } = useTableData({
+    url: `${baseUrl}${endpoint}?queryCriteria=${JSON.stringify(queryCriteria)}`
   });
   const sortedItems = useSorting ? useSorting(items, state.sortDescriptor) : items;
   const totalPages = Math.ceil(totalCount / state.rowsPerPage);

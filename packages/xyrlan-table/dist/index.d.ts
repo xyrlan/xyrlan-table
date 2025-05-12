@@ -44,8 +44,20 @@ interface GenericTableProps<T> extends RenderProps<T>, Partial<SelectionProps>, 
 }
 
 interface UseTableOptions<T> {
+    /** Configuração de colunas e visibilidade */
+    columns: Column<T>[];
+    initialVisibleColumns: (keyof T | "actions")[];
+    /** Campos para busca full-text */
+    searchFields: (keyof T & string)[];
     /** Rota a usar com o provedor padrão (default) */
     endpoint: string;
+    /** Base URL para o endpoint padrão */
+    baseUrl?: string;
+    /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
+    renderCellMap?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React$1.ReactNode>>;
+    /** Adicionar botão de "novo item" */
+    addNewItem?: boolean;
+    addNewItemComponent?: React$1.ReactNode | ((mutate: any) => React$1.ReactNode);
     /** DataProvider customizado (substitui `endpoint`) */
     dataProvider?: (params: any) => Promise<{
         data: T[];
@@ -55,18 +67,6 @@ interface UseTableOptions<T> {
             pageSize: number;
         };
     }>;
-    /** Base URL para o endpoint padrão */
-    baseUrl?: string;
-    /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
-    renderCellMap?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React$1.ReactNode>>;
-    /** Configuração de colunas e visibilidade */
-    columns: Column<T>[];
-    initialVisibleColumns: (keyof T | "actions")[];
-    /** Campos para busca full-text */
-    searchFields: (keyof T)[];
-    /** Adicionar botão de "novo item" */
-    addNewItem?: boolean;
-    addNewItemComponent?: React$1.ReactNode | ((mutate: any) => React$1.ReactNode);
 }
 
 declare function XyrlanTable<T extends object>(props: UseTableOptions<T>): react_jsx_runtime.JSX.Element;

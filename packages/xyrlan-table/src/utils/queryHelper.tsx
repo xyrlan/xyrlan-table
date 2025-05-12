@@ -1,4 +1,4 @@
-export class QueryParamsBuilder {
+export class QueryParamsBuilder<T> {
   private static buildFilterParams(filterParams: any[]): any {
     return filterParams.reduce((acc: any, item: any) => {
       // Verifica se o campo é aninhado usando "_"
@@ -42,7 +42,7 @@ export class QueryParamsBuilder {
     return { ...searchParam, mode: "insensitive" };
   }
 
-  private static buildSearchFields(searchFields: string[], searchParam: any) {
+  private static buildSearchFields<T>(searchFields: (keyof T & string)[], searchParam: any) {
     return searchFields.map((field) => {
       const keys = field.split("_");
       let condition: any = { contains: searchParam.contains, mode: "insensitive" };
@@ -55,10 +55,10 @@ export class QueryParamsBuilder {
     });
   }
 
-  static buildQueryParams(
+  static buildQueryParams<T>(
     filterParams?: { [key: string]: any }[],
     searchParam?: any,
-    searchFields?: string[],
+    searchFields?: (keyof T & string)[],
   ): any {
     const conditions: any[] = [];
   
