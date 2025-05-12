@@ -83,7 +83,7 @@ export default function IndexPage() {
 | ----------------------- | ---------------------------------------------------------------------------- | ----------------------------- | -------------------------------------- |
 | `endpoint`              | string                                                                       | **Required**                  | API endpoint for default data provider |
 | `columns`               | `Column<T>[]`                                                                | **Required**                  | Column definitions                     |
-| `initialVisibleColumns` | `(keyof T | "actions")[]`                                                    | **Required**                  | Initially visible columns              |
+| `initialVisibleColumns` | `(keyof T   "actions")[]`                                                    | **Required**                  | Initially visible columns              |
 | `searchFields`          | `(keyof T)[]`                                                                | **Required**                  | Fields for full-text search            |
 | `dataProvider`          | `(params: any) => Promise<{ items: T[]; totalCount: number }>`               | Optional                      | Custom data fetching function          |
 | `baseUrl`               | string                                                                       | `process.env.NEXT_PUBLIC_URL` | Base URL for API requests              |
