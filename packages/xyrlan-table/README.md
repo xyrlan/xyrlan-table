@@ -23,12 +23,6 @@ npm install xyrlan-table
 yarn add xyrlan-table
 ```
 
-## 🧱 Requirements
-
-```bash
-npm install react react-dom tailwindcss framer-motion
-```
-
 ## 🧱 Basic Usage
 
 ```tsx
