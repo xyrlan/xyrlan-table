@@ -86,7 +86,8 @@ function GenericTable({
             loadingContent: /* @__PURE__ */ jsx2(CircularProgress, { "aria-label": "Carregando..." }),
             children: (item) => /* @__PURE__ */ jsx2(TableRow, { children: (columnKey) => /* @__PURE__ */ jsxs(TableCell, { children: [
               " ",
-              getCellRenderer(item, columnKey, renderCell, mutate)
+              getCellRenderer(item, columnKey, renderCell, mutate),
+              " "
             ] }) }, item.id)
           }
         )
@@ -260,15 +261,10 @@ function createDefaultDataProvider(endpoint, baseUrl = "") {
       const res = await fetch(url.toString());
       if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
       const json = await res.json();
-      return {
-        items: json,
-        // Assume que o JSON é um array de objetos
-        totalCount: json.length
-        // Estimativa simples; pode ser substituído se sua API suportar total real
-      };
+      return json;
     } catch (err) {
       console.error("Data fetch error:", err);
-      return { items: [], totalCount: 0 };
+      return { data: [], paging: { totalCount: 0, page: 1, pageSize: 10 } };
     }
   };
 }
@@ -278,7 +274,7 @@ function useTableData(opts) {
   const {
     endpoint,
     customProvider,
-    baseUrl,
+    baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "",
     page,
     perPage,
     sortDescriptor,

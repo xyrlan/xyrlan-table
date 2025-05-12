@@ -111,7 +111,7 @@ export default function GenericTable<T extends Record<string, any>>({
           {(item) => (
             <TableRow key={(item as any).id}>
               {(columnKey) => (
-                <TableCell> {getCellRenderer(item, columnKey as keyof T, renderCell, mutate)}</TableCell>
+                <TableCell> {getCellRenderer(item, columnKey as keyof T as string | "actions", renderCell, mutate)} </TableCell>
               )}
             </TableRow>
           )}

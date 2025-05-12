@@ -3,18 +3,18 @@ import { createDefaultDataProvider } from "./defaultDataProvider";
 import { DataProvider, QueryParams } from "./useTable.types";
 
 export function useTableData<T>(opts: {
-  endpoint?: string;
-  customProvider?: DataProvider<T>;
-  baseUrl?: string;
+  endpoint: string;
   page: number;
   perPage: number;
   sortDescriptor: { column: string; direction: "ascending" | "descending" };
   filterParams: { field: string; value: any }[];
   searchParam: { contains: string } | undefined;
   searchFields?: string[];
+  customProvider?: DataProvider<T>;
+  baseUrl?: string;
 }) {
   const {
-    endpoint, customProvider, baseUrl,
+    endpoint, customProvider, baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "",
     page, perPage, sortDescriptor, filterParams,
     searchParam, searchFields,
   } = opts;

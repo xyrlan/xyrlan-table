@@ -1,4 +1,4 @@
-import { DataProvider, QueryParams } from "./useTable.types";
+import { DataProvider, DataResponse, QueryParams } from "./useTable.types";
 
 export function createDefaultDataProvider<T>(endpoint: string, baseUrl = ""): DataProvider<T> {
   if (!endpoint) throw new Error("Endpoint is required.");
@@ -16,15 +16,12 @@ export function createDefaultDataProvider<T>(endpoint: string, baseUrl = ""): Da
     try {
       const res = await fetch(url.toString());
       if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
-      const json: T[] = await res.json();
-
-      return {
-        items: json, // Assume que o JSON é um array de objetos
-        totalCount: json.length, // Estimativa simples; pode ser substituído se sua API suportar total real
-      };
+      const json: DataResponse<T> = await res.json();
+      
+      return json
     } catch (err) {
       console.error("Data fetch error:", err);
-      return { items: [], totalCount: 0 };
+      return { data: [], paging: { totalCount: 0, page: 1, pageSize: 10 } };
     }
   };
 }
