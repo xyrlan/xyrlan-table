@@ -91,7 +91,6 @@ export default function IndexPage() {
 | `addNewItem`            | boolean                                                                             | Optional                      | Show "Add New" button                  |
 | `addNewItemComponent`   | `React.ReactNode | ((mutate: any) => React.ReactNode)`                              | Optional                      | Custom "Add New" component             |
 
-// data handling 
 ## Data Handling
 
 The component sends requests with the following query parameters structure:
