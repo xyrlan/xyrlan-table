@@ -23,29 +23,11 @@ npm install xyrlan-table
 yarn add xyrlan-table
 ```
 
-## ✨ Features
-
-✅ Ordenação por coluna
-
-✅ Paginação automática
-
-✅ Busca global e filtros
-
-✅ Suporte a seleção múltipla
-
-✅ Renderização customizada de células
-
-✅ Integração com qualquer API REST
-
-✅ Compatível com Next.js
-
-
 ## 🧱 Requisitos
 
 ```bash
 npm install react react-dom tailwindcss framer-motion
 ```
-Configure também o TailwindCSS e envolva sua aplicação com o HeroUIProvider:
 
 ## 🧱 Basic Usage
 
