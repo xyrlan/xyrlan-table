@@ -247,95 +247,31 @@ function useTableState(columns, initialVisibleColumns) {
 // src/hooks/useTableData.tsx
 import useSWR from "swr";
 
-// src/utils/queryHelper.tsx
-var QueryParamsBuilder = class {
-  static buildFilterParams(filterParams) {
-    return filterParams.reduce((acc, item) => {
-      if (item.field.includes("_")) {
-        const keys = item.field.split("_");
-        let currentLevel = acc;
-        keys.forEach((key, index) => {
-          if (index === keys.length - 1) {
-            if (Array.isArray(item.value)) {
-              currentLevel[key] = { in: item.value };
-            } else {
-              currentLevel[key] = item.value;
-            }
-          } else {
-            currentLevel[key] = currentLevel[key] || {};
-            currentLevel = currentLevel[key];
-          }
-        });
-      } else {
-        if (Array.isArray(item.value)) {
-          acc[item.field] = { in: item.value };
-        } else {
-          acc[item.field] = item.value;
-        }
-      }
-      return acc;
-    }, {});
-  }
-  static buildSearchParam(searchParam) {
-    return { ...searchParam, mode: "insensitive" };
-  }
-  static buildSearchFields(searchFields, searchParam) {
-    return searchFields.map((field) => {
-      const keys = field.split("_");
-      let condition = { contains: searchParam.contains, mode: "insensitive" };
-      for (let i = keys.length - 1; i >= 0; i--) {
-        condition = { [keys[i]]: condition };
-      }
-      return condition;
-    });
-  }
-  static buildQueryParams(filterParams, searchParam, searchFields) {
-    const conditions = [];
-    if (searchParam) {
-      if (!searchFields || searchFields.length === 0) {
-        throw new Error(
-          "searchFields must be provided when searchParam is used."
-        );
-      }
-      const orConditions = this.buildSearchFields(searchFields, searchParam);
-      conditions.push({ OR: orConditions });
-    }
-    if (filterParams) {
-      const filters = this.buildFilterParams(filterParams);
-      conditions.push(filters);
-    }
-    return conditions.length > 1 ? { AND: conditions } : conditions[0] || {};
-  }
-};
-
 // src/hooks/defaultDataProvider.ts
-function createDefaultDataProvider(endpoint, baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "") {
-  return async ({
-    page,
-    perPage,
-    sort,
-    filterParams,
-    searchParam,
-    searchFields
-  }) => {
-    const where = QueryParamsBuilder.buildQueryParams(
-      filterParams,
-      searchParam,
-      searchFields
-    );
-    const queryCriteria = {
-      page,
-      pageSize: perPage,
-      orderBy: sort ? { [sort.column]: sort.direction } : void 0,
-      params: where
-    };
-    const url = `${baseUrl}${endpoint}?queryCriteria=` + encodeURIComponent(JSON.stringify(queryCriteria));
-    const res = await fetch(url);
-    const json = await res.json();
-    return {
-      items: json.data,
-      totalCount: json.paging.totalCount
-    };
+function createDefaultDataProvider(endpoint, baseUrl = "") {
+  if (!endpoint) throw new Error("Endpoint is required.");
+  return async (params) => {
+    const url = new URL(`${baseUrl}${endpoint}`);
+    url.searchParams.append("page", params.page.toString());
+    url.searchParams.append("perPage", params.perPage.toString());
+    if (params.sort) {
+      url.searchParams.append("sortBy", params.sort.column);
+      url.searchParams.append("sortOrder", params.sort.direction);
+    }
+    try {
+      const res = await fetch(url.toString());
+      if (!res.ok) throw new Error(`Fetch failed: ${res.status} ${res.statusText}`);
+      const json = await res.json();
+      return {
+        items: json,
+        // Assume que o JSON é um array de objetos
+        totalCount: json.length
+        // Estimativa simples; pode ser substituído se sua API suportar total real
+      };
+    } catch (err) {
+      console.error("Data fetch error:", err);
+      return { items: [], totalCount: 0 };
+    }
   };
 }
 
@@ -353,6 +289,7 @@ function useTableData(opts) {
     searchFields
   } = opts;
   const provider = customProvider ? customProvider : createDefaultDataProvider(endpoint, baseUrl);
+  console.log("Provider:", provider);
   const key = [
     "table-data",
     page,
@@ -375,6 +312,7 @@ function useTableData(opts) {
       searchFields
     })
   );
+  console.log(data);
   return {
     items: data?.items ?? [],
     totalCount: data?.totalCount ?? 0,

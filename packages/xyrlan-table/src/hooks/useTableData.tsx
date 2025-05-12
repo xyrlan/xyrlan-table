@@ -1,5 +1,5 @@
 import useSWR from "swr";
-import { createDefaultDataProvider } from "./defaultDataProvider"; 
+import { createDefaultDataProvider } from "./defaultDataProvider";
 import { DataProvider, QueryParams } from "./useTable.types";
 
 export function useTableData<T>(opts: {
@@ -8,7 +8,7 @@ export function useTableData<T>(opts: {
   baseUrl?: string;
   page: number;
   perPage: number;
-  sortDescriptor: { column: string; direction: "ascending"|"descending" };
+  sortDescriptor: { column: string; direction: "ascending" | "descending" };
   filterParams: { field: string; value: any }[];
   searchParam: { contains: string } | undefined;
   searchFields?: string[];
@@ -22,6 +22,8 @@ export function useTableData<T>(opts: {
   const provider = customProvider
     ? customProvider
     : createDefaultDataProvider<T>(endpoint!, baseUrl);
+
+console.log("Provider:", provider);
 
   const key = ["table-data",
     page, perPage, sortDescriptor, filterParams, searchParam
@@ -41,10 +43,10 @@ export function useTableData<T>(opts: {
       searchFields,
     } as QueryParams)
   );
-
+  console.log(data);
   return {
-    items:     data?.items     ?? []   as T[],
-    totalCount:data?.totalCount?? 0,
+    items: data?.items ?? [] as T[],
+    totalCount: data?.totalCount ?? 0,
     isLoading: isValidating,
     error,
     mutate,
