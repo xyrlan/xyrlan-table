@@ -10,13 +10,13 @@ import { Column } from "../GenericTable.types";
 
 export interface UseTableOptions<T> {
   /** Rota a usar com o provedor padrão (default) */
-  endpoint?: string;
+  endpoint: string;
   /** DataProvider customizado (substitui `endpoint`) */
   dataProvider?: (params: any) => Promise<{ items: T[]; totalCount: number }>;
   /** Base URL para o endpoint padrão */
   baseUrl?: string;
   /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
-  renderCell?: (item: T, columnKey: keyof T | "actions", mutate?: any) => React.ReactNode;
+  renderCellMap?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React.ReactNode>>;
   /** Configuração de colunas e visibilidade */
   columns: Column<T>[];
   initialVisibleColumns: (keyof T | "actions")[];

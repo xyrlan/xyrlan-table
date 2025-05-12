@@ -28,18 +28,7 @@ function GenericTable({
   isLoading,
   sortDescriptor,
   onSortChange,
-  filterableColumns = [],
-  totalCount,
-  rowsPerPage,
-  page,
-  setPage,
   mutate,
-  visibleColumns,
-  setVisibleColumns,
-  dispatch,
-  debouncedSearch,
-  addNewItem,
-  addNewItemComponent,
   topContent,
   bottomContent
 }) {
@@ -56,6 +45,12 @@ function GenericTable({
       onSelectionChange(keys);
     }
   };
+  function getCellRenderer(item, columnKey, renderCellMap, mutate2) {
+    if (renderCellMap?.[columnKey]) {
+      return renderCellMap[columnKey]?.(item, mutate2);
+    }
+    return defaultRenderCell(item, columnKey);
+  }
   const effectiveRenderCell = renderCell ?? defaultRenderCell;
   return /* @__PURE__ */ jsx2("section", { className: "space-y-4", children: /* @__PURE__ */ jsxs(
     Table,
@@ -89,7 +84,10 @@ function GenericTable({
             isLoading,
             items,
             loadingContent: /* @__PURE__ */ jsx2(CircularProgress, { "aria-label": "Carregando..." }),
-            children: (item) => /* @__PURE__ */ jsx2(TableRow, { children: (columnKey) => /* @__PURE__ */ jsx2(TableCell, { children: effectiveRenderCell(item, columnKey, mutate) }) }, item.id)
+            children: (item) => /* @__PURE__ */ jsx2(TableRow, { children: (columnKey) => /* @__PURE__ */ jsxs(TableCell, { children: [
+              " ",
+              getCellRenderer(item, columnKey, renderCell, mutate)
+            ] }) }, item.id)
           }
         )
       ]
@@ -598,7 +596,7 @@ function XyrlanTable(props) {
       topContent,
       bottomContent,
       mutate,
-      renderCell: props.renderCell
+      renderCell: props.renderCellMap
     }
   );
 }

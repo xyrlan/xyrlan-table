@@ -27,6 +27,8 @@ type InternalTableProps<T> = GenericTableProps<T> & {
   bottomContent?: React.ReactNode;
 };
 
+type RenderCellMap<T> = Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React.ReactNode>>;
+
 export default function GenericTable<T extends Record<string, any>>({
   columns,
   items,
@@ -37,18 +39,7 @@ export default function GenericTable<T extends Record<string, any>>({
   isLoading,
   sortDescriptor,
   onSortChange,
-  filterableColumns = [],
-  totalCount,
-  rowsPerPage,
-  page,
-  setPage,
   mutate,
-  visibleColumns,
-  setVisibleColumns,
-  dispatch,
-  debouncedSearch,
-  addNewItem,
-  addNewItemComponent,
   topContent,
   bottomContent,
 }: InternalTableProps<T>) {
@@ -67,6 +58,19 @@ export default function GenericTable<T extends Record<string, any>>({
       onSelectionChange(keys as Set<Key>);
     }
   };
+
+  function getCellRenderer<T extends object>(
+    item: T,
+    columnKey: keyof T | "actions",
+    renderCellMap?: RenderCellMap<T>,
+    mutate?: any
+  ) {
+    if (renderCellMap?.[columnKey]) {
+      return renderCellMap[columnKey]?.(item, mutate);
+    }
+
+    return defaultRenderCell(item, columnKey as keyof T);
+  }
 
   const effectiveRenderCell = renderCell ?? defaultRenderCell;
 
@@ -107,7 +111,7 @@ export default function GenericTable<T extends Record<string, any>>({
           {(item) => (
             <TableRow key={(item as any).id}>
               {(columnKey) => (
-                <TableCell>{effectiveRenderCell(item, columnKey as keyof T, mutate)}</TableCell>
+                <TableCell> {getCellRenderer(item, columnKey as keyof T, renderCell, mutate)}</TableCell>
               )}
             </TableRow>
           )}

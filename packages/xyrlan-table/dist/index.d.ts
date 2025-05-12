@@ -15,7 +15,7 @@ interface Column<T = any> {
 interface RenderProps<T> {
     columns: Column[];
     items: T[];
-    renderCell?: (item: T, columnKey: keyof T | "actions", mutate?: any) => React.ReactNode;
+    renderCell?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React.ReactNode>>;
 }
 interface SelectionProps {
     selectedKeys: "all" | Set<Key>;
@@ -45,7 +45,7 @@ interface GenericTableProps<T> extends RenderProps<T>, Partial<SelectionProps>, 
 
 interface UseTableOptions<T> {
     /** Rota a usar com o provedor padrão (default) */
-    endpoint?: string;
+    endpoint: string;
     /** DataProvider customizado (substitui `endpoint`) */
     dataProvider?: (params: any) => Promise<{
         items: T[];
@@ -54,7 +54,7 @@ interface UseTableOptions<T> {
     /** Base URL para o endpoint padrão */
     baseUrl?: string;
     /** RenderCell customizado (substitui `renderCell` padrão) eg. renderCell={(item, columnKey, mutate) => <CustomCell item={item} columnKey={columnKey} mutate={mutate} />} */
-    renderCell?: (item: T, columnKey: keyof T | "actions", mutate?: any) => React$1.ReactNode;
+    renderCellMap?: Partial<Record<keyof T | "actions", (item: T, mutate?: any) => React$1.ReactNode>>;
     /** Configuração de colunas e visibilidade */
     columns: Column<T>[];
     initialVisibleColumns: (keyof T | "actions")[];

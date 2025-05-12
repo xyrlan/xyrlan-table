@@ -30,7 +30,7 @@ export default function XyrlanTable<T extends object>(props: UseTableOptions<T>)
         topContent={topContent}
         bottomContent={bottomContent}
         mutate={mutate}
-        renderCell={props.renderCell}
+        renderCell={props.renderCellMap}
       />
   );
 }

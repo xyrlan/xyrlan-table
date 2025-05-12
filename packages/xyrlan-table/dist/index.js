@@ -59,18 +59,7 @@ function GenericTable({
   isLoading,
   sortDescriptor,
   onSortChange,
-  filterableColumns = [],
-  totalCount,
-  rowsPerPage,
-  page,
-  setPage,
   mutate,
-  visibleColumns,
-  setVisibleColumns,
-  dispatch,
-  debouncedSearch,
-  addNewItem,
-  addNewItemComponent,
   topContent,
   bottomContent
 }) {
@@ -87,6 +76,12 @@ function GenericTable({
       onSelectionChange(keys);
     }
   };
+  function getCellRenderer(item, columnKey, renderCellMap, mutate2) {
+    if (renderCellMap?.[columnKey]) {
+      return renderCellMap[columnKey]?.(item, mutate2);
+    }
+    return defaultRenderCell(item, columnKey);
+  }
   const effectiveRenderCell = renderCell ?? defaultRenderCell;
   return /* @__PURE__ */ (0, import_jsx_runtime2.jsx)("section", { className: "space-y-4", children: /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(
     import_table.Table,
@@ -120,7 +115,10 @@ function GenericTable({
             isLoading,
             items,
             loadingContent: /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_progress.CircularProgress, { "aria-label": "Carregando..." }),
-            children: (item) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_table.TableRow, { children: (columnKey) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_table.TableCell, { children: effectiveRenderCell(item, columnKey, mutate) }) }, item.id)
+            children: (item) => /* @__PURE__ */ (0, import_jsx_runtime2.jsx)(import_table.TableRow, { children: (columnKey) => /* @__PURE__ */ (0, import_jsx_runtime2.jsxs)(import_table.TableCell, { children: [
+              " ",
+              getCellRenderer(item, columnKey, renderCell, mutate)
+            ] }) }, item.id)
           }
         )
       ]
@@ -629,7 +627,7 @@ function XyrlanTable(props) {
       topContent,
       bottomContent,
       mutate,
-      renderCell: props.renderCell
+      renderCell: props.renderCellMap
     }
   );
 }
