@@ -49,7 +49,7 @@ Configure também o TailwindCSS e envolva sua aplicação com o HeroUIProvider:
 
 ## 🧱 Basic Usage
 
-```
+```tsx
 import { XyrlanTable } from 'xyrlan-table';
 import DefaultLayout from "@/layouts/default";
 
@@ -94,7 +94,7 @@ export default function IndexPage() {
 ## Data Handling
 
 The component sends requests with the following query parameters structure:
-```
+```ts
 {
   queryCriteria: {
     page: number,
@@ -107,7 +107,7 @@ The component sends requests with the following query parameters structure:
 ```
 
 Example Next.js API handler with Next.js + Prisma:
-```
+```ts
 export async function GET(request: NextRequest) {
   const queryCriteria = JSON.parse(request.nextUrl.searchParams.get("queryCriteria") || "{}");
   
@@ -137,3 +137,19 @@ export async function GET(request: NextRequest) {
   });
 }
 ```
+
+## Custom Cell Rendering
+If you want to customize only the "actions" or "status" column, just do:
+```tsx
+<XyrlanTable
+  renderCellMap={{
+    status: (user) => (
+      <Chip color={user.status === "active" ? "success" : "danger"}>
+        {user.status}
+      </Chip>
+    ),
+    actions: (user) => <MyActions user={user} />,
+  }}
+/>
+```
+If renderCellMap is not passed, all columns fall back to defaultRenderCell.
