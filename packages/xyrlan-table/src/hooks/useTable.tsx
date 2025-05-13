@@ -6,7 +6,7 @@ import { useTableData } from "../hooks/useTableData";
 import { useSorting } from "../hooks/useSorting";
 import { TableToolbar } from "../components/TableToolbar";
 import { TablePagination } from "../components/TablePagination";
-import { Column } from "../GenericTable.types";
+import { Column, FilterableColumn } from "../GenericTable.types";
 import { QueryParamsBuilder } from "../utils/queryHelper";
 
 export interface UseTableOptions<T> {
@@ -109,15 +109,18 @@ export function useTable<T>({
   const totalPages = Math.ceil(totalCount / state.rowsPerPage);
 
   // 6) Filtros disponíveis
-  const filterableColumns = useMemo(
-    () => headerColumns.filter((col) => col.filterable),
+  function isFilterableColumn<T>(col: Column<T>): col is FilterableColumn<T> {
+    return col.filterable === true && Array.isArray(col.filterOptions);
+  }
+  const filterableColumns: FilterableColumn<T>[] = useMemo(
+    () => headerColumns.filter(isFilterableColumn),
     [headerColumns]
   );
 
   // 7) Construção dos slots de UI (Toolbar + Pagination)
   const topContent = useMemo(
     () => (
-      <TableToolbar
+      <TableToolbar<T>
         state={state}
         columns={columns}
         filterableColumns={filterableColumns}
@@ -125,6 +128,7 @@ export function useTable<T>({
         setVisibleColumns={setVisibleColumns as any}
         dispatch={dispatch}
         debouncedSearch={debouncedSearch}
+        total={totalCount}
         selectionMode={selectionMode}
         addNewItem={addNewItem}
         addNewItemComponent={addNewItemComponent}
@@ -147,6 +151,7 @@ export function useTable<T>({
         page={state.page}
         rowsPerPage={state.rowsPerPage}
         setPage={(p) => dispatch({ type: "SET_PAGE", payload: p })}
+        selectionMode={selectionMode}
         selectedKeys={selectedKeys as Set<Key>}
       />
     ), [totalCount, state.page, state.rowsPerPage, selectedKeys]);

@@ -9,6 +9,7 @@ type TablePaginationProps = {
   selectedKeys: Set<React.Key> | "all";
   onSelectAllChange?: (checked: boolean) => void;
   setPage: (page: number) => void;
+  selectionMode: boolean;
 };
 
 export function TablePagination({
@@ -18,6 +19,7 @@ export function TablePagination({
   selectedKeys,
   setPage,
   onSelectAllChange,
+  selectionMode
 }: TablePaginationProps) {
   const totalPages = Math.ceil(total / rowsPerPage);
   const selectedCount = selectedKeys === "all" ? total : selectedKeys.size;
@@ -27,8 +29,12 @@ export function TablePagination({
 
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-2 text-sm text-default-400">
-      <span>
-        Total de registros: <strong className="text-default-600">{total}</strong>
+      <span className="w-[30%] text-small text-default-400">
+        {selectionMode &&
+          (selectedKeys === "all"
+            ? "All items selected"
+            : `${selectedKeys.size} de ${total} selecionado${selectedKeys.size > 1 ? "s" : ""}`)
+        }
       </span>
 
       <div className="flex items-center gap-4">
@@ -43,17 +49,14 @@ export function TablePagination({
         )}
 
         <Pagination
+          isCompact
           size="sm"
           showControls
+          showShadow
+          color="primary"
           total={totalPages}
           page={page}
           onChange={setPage}
-          classNames={{
-            cursor: "bg-foreground text-background",
-            item: "text-default-500",
-          }}
-          radius="full"
-          variant="flat"
         />
       </div>
     </div>

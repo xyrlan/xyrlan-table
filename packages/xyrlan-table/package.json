@@ -1,6 +1,6 @@
 {
   "name": "xyrlan-table",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Biblioteca de tabela dinâmica reutilizável para React",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -49,6 +49,8 @@
     "@heroui/pagination": "^2.2.17",
     "@heroui/popover": "^2.3.19",
     "@heroui/progress": "^2.2.15",
+    "@heroui/select": "^2.4.19",
+    "@heroui/switch": "^2.2.17",
     "@heroui/system": "^2.4.15",
     "@heroui/table": "^2.2.18",
     "@heroui/theme": "^2.4.15",

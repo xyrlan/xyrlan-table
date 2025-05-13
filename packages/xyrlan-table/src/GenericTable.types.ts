@@ -9,6 +9,10 @@ export interface Column<T = any> {
   filterOptions?: { value: any; label?: string }[];
 }
 
+export type FilterableColumn<T> = Column<T> & {
+  filterOptions: { value: any; label?: string }[];
+};
+
 // Props para renderização da tabela
 export interface RenderProps<T> {
   columns: Column[];

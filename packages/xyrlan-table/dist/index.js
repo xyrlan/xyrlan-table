@@ -329,6 +329,8 @@ var import_lucide_react = require("lucide-react");
 var import_dropdown = require("@heroui/dropdown");
 var import_popover = require("@heroui/popover");
 var import_checkbox = require("@heroui/checkbox");
+var import_select = require("@heroui/select");
+var import_switch = require("@heroui/switch");
 var import_button = require("@heroui/button");
 var import_jsx_runtime3 = require("react/jsx-runtime");
 function TableToolbar({
@@ -338,69 +340,132 @@ function TableToolbar({
   setVisibleColumns,
   dispatch,
   debouncedSearch,
+  total,
   columns,
   addNewItem,
   addNewItemComponent,
   selectionMode
 }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-3 flex-grow", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-      import_input.Input,
-      {
-        isClearable: true,
-        className: "w-full sm:max-w-[25%]",
-        placeholder: "Pesquisar...",
-        size: "sm",
-        startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.SearchIcon, {}),
-        onClear: () => dispatch?.({ type: "CLEAR_FILTER" }),
-        onValueChange: (value) => {
-          debouncedSearch?.(value);
-          dispatch?.({ type: "SET_PAGES", payload: 1 });
-        }
-      }
-    ),
-    filterableColumns.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_popover.Popover, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.FilterIcon, { size: 18 }), variant: "flat", children: "Filtros" }) }),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverContent, { className: "min-w-[300px] flex flex-col gap-4", children: filterableColumns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        import_checkbox.CheckboxGroup,
-        {
-          label: column.name,
-          value: state.filterParams[column.uid] ? Array.from(state.filterParams[column.uid]) : Array.from(
-            column?.filterOptions?.reduce(
-              (acc, option) => acc.add(option.value),
-              /* @__PURE__ */ new Set()
-              // inicializa com um Set vazio
-            ) ?? /* @__PURE__ */ new Set(),
-            // se não tiver nenhum valor, retorna um Set vazio
-            (option) => option.value
-          ),
-          onChange: (value) => {
-            dispatch?.({
-              type: "SET_FILTER_PARAM",
-              payload: {
-                field: column.uid,
-                value: new Set(value)
-              }
-            });
-            dispatch?.({ type: "SET_PAGES", payload: 1 });
-          },
-          children: column?.filterOptions?.map((option) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_checkbox.Checkbox, { value: option.value, children: option.label ?? option.value }, option.value))
-        },
-        column.uid
-      )) })
-    ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_dropdown.Dropdown, { children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownTrigger, { className: "hidden sm:flex", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.Columns3, { size: 18 }), variant: "flat", children: "Colunas" }) }),
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex flex-col gap-4", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-3 flex-grow", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex flex-col gap-2 items-center", children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          import_switch.Switch,
+          {
+            defaultSelected: selectionMode,
+            size: "sm",
+            onValueChange: () => dispatch?.({
+              type: "SET_SELECTION_MODE",
+              payload: !selectionMode
+            })
+          }
+        ),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-xs check", children: "Modo selecionar" })
+      ] }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        import_dropdown.DropdownMenu,
+        import_input.Input,
         {
-          disallowEmptySelection: true,
-          "aria-label": "Table Columns",
-          closeOnSelect: false,
-          selectedKeys: visibleColumns,
-          selectionMode: "multiple",
-          onSelectionChange: setVisibleColumns,
-          children: columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownItem, { children: column.name }, column.uid))
+          isClearable: true,
+          className: "w-full sm:max-w-[25%]",
+          placeholder: "Pesquisar...",
+          size: "sm",
+          startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.SearchIcon, {}),
+          onClear: () => dispatch?.({ type: "CLEAR_FILTER" }),
+          onValueChange: (value) => {
+            debouncedSearch?.(value);
+            dispatch?.({ type: "SET_PAGES", payload: 1 });
+          }
+        }
+      ),
+      filterableColumns.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+        import_popover.Popover,
+        {
+          classNames: {
+            content: "min-w-[300px] flex flex-col items-start gap-4 py-4 px-4"
+          },
+          size: "sm",
+          children: [
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.FilterIcon, { size: 18 }), variant: "flat", children: "Filtros" }) }),
+            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverContent, { children: filterableColumns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+              import_checkbox.CheckboxGroup,
+              {
+                classNames: {
+                  label: "capitalize text-sm"
+                },
+                label: column.name,
+                value: state.filterParams[column.uid] ? Array.from(state.filterParams[column.uid]) : Array.from(
+                  column.filterOptions.map(
+                    (option) => option.value
+                  )
+                ),
+                onChange: (value) => {
+                  dispatch?.({
+                    type: "SET_FILTER_PARAM",
+                    payload: {
+                      field: column.uid,
+                      value: new Set(value)
+                    }
+                  });
+                  dispatch?.({ type: "SET_PAGES", payload: 1 });
+                },
+                children: column?.filterOptions?.map((option) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                  import_checkbox.Checkbox,
+                  {
+                    value: option.value,
+                    classNames: {
+                      label: "text-sm "
+                    },
+                    children: option.label ?? option.value
+                  },
+                  option.value
+                ))
+              },
+              column.uid
+            )) })
+          ]
+        }
+      ),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_dropdown.Dropdown, { children: [
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownTrigger, { className: "hidden sm:flex", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.Columns3, { size: 18 }), variant: "flat", children: "Colunas" }) }),
+        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+          import_dropdown.DropdownMenu,
+          {
+            disallowEmptySelection: true,
+            "aria-label": "Table Columns",
+            closeOnSelect: false,
+            selectedKeys: visibleColumns,
+            selectionMode: "multiple",
+            onSelectionChange: setVisibleColumns,
+            children: columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownItem, { children: column.name }, column.uid))
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between items-center", children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "text-default-400 text-small", children: [
+        "Total ",
+        total,
+        " registros"
+      ] }),
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+        import_select.Select,
+        {
+          className: "max-w-48",
+          classNames: {
+            label: "text-default-400 text-small"
+          },
+          label: "Linhas por p\xE1gina",
+          labelPlacement: "outside-left",
+          selectedKeys: [state.rowsPerPage.toString()],
+          selectionMode: "single",
+          size: "sm",
+          onChange: (e) => dispatch?.({
+            type: "SET_ROWS_PER_PAGE",
+            payload: Number(e.target.value)
+          }),
+          children: ["5", "10", "15", "20", "25", "30", "35", "40", "50", "60", "70", "80", "90", "100"].map(
+            (size) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_select.SelectItem, { children: size }, size.toString())
+          )
         }
       )
     ] })
@@ -417,17 +482,15 @@ function TablePagination({
   rowsPerPage,
   selectedKeys,
   setPage,
-  onSelectAllChange
+  onSelectAllChange,
+  selectionMode
 }) {
   const totalPages = Math.ceil(total / rowsPerPage);
   const selectedCount = selectedKeys === "all" ? total : selectedKeys.size;
   const isAllSelected = selectedKeys === "all" || selectedCount === total;
   const isIndeterminate = selectedKeys !== "all" && selectedCount > 0 && selectedCount < total;
   return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-2 text-sm text-default-400", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { children: [
-      "Total de registros: ",
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: "text-default-600", children: total })
-    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "w-[30%] text-small text-default-400", children: selectionMode && (selectedKeys === "all" ? "All items selected" : `${selectedKeys.size} de ${total} selecionado${selectedKeys.size > 1 ? "s" : ""}`) }),
     /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-4", children: [
       onSelectAllChange && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         import_checkbox2.Checkbox,
@@ -441,17 +504,14 @@ function TablePagination({
       /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
         import_pagination.Pagination,
         {
+          isCompact: true,
           size: "sm",
           showControls: true,
+          showShadow: true,
+          color: "primary",
           total: totalPages,
           page,
-          onChange: setPage,
-          classNames: {
-            cursor: "bg-foreground text-background",
-            item: "text-default-500"
-          },
-          radius: "full",
-          variant: "flat"
+          onChange: setPage
         }
       )
     ] })
@@ -576,8 +636,11 @@ function useTable({
   });
   const sortedItems = useSorting ? useSorting(items, state.sortDescriptor) : items;
   const totalPages = Math.ceil(totalCount / state.rowsPerPage);
+  function isFilterableColumn(col) {
+    return col.filterable === true && Array.isArray(col.filterOptions);
+  }
   const filterableColumns = (0, import_react4.useMemo)(
-    () => headerColumns.filter((col) => col.filterable),
+    () => headerColumns.filter(isFilterableColumn),
     [headerColumns]
   );
   const topContent = (0, import_react4.useMemo)(
@@ -591,6 +654,7 @@ function useTable({
         setVisibleColumns,
         dispatch,
         debouncedSearch,
+        total: totalCount,
         selectionMode,
         addNewItem,
         addNewItemComponent
@@ -614,6 +678,7 @@ function useTable({
         page: state.page,
         rowsPerPage: state.rowsPerPage,
         setPage: (p) => dispatch({ type: "SET_PAGE", payload: p }),
+        selectionMode,
         selectedKeys
       }
     ),

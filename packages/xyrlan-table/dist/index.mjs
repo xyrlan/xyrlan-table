@@ -298,6 +298,8 @@ import { FilterIcon, Columns3, SearchIcon } from "lucide-react";
 import { Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/dropdown";
 import { Popover, PopoverTrigger, PopoverContent } from "@heroui/popover";
 import { CheckboxGroup, Checkbox } from "@heroui/checkbox";
+import { Select, SelectItem } from "@heroui/select";
+import { Switch } from "@heroui/switch";
 import { Button } from "@heroui/button";
 import { jsx as jsx3, jsxs as jsxs2 } from "react/jsx-runtime";
 function TableToolbar({
@@ -307,69 +309,132 @@ function TableToolbar({
   setVisibleColumns,
   dispatch,
   debouncedSearch,
+  total,
   columns,
   addNewItem,
   addNewItemComponent,
   selectionMode
 }) {
-  return /* @__PURE__ */ jsxs2("div", { className: "flex gap-3 flex-grow", children: [
-    /* @__PURE__ */ jsx3(
-      Input,
-      {
-        isClearable: true,
-        className: "w-full sm:max-w-[25%]",
-        placeholder: "Pesquisar...",
-        size: "sm",
-        startContent: /* @__PURE__ */ jsx3(SearchIcon, {}),
-        onClear: () => dispatch?.({ type: "CLEAR_FILTER" }),
-        onValueChange: (value) => {
-          debouncedSearch?.(value);
-          dispatch?.({ type: "SET_PAGES", payload: 1 });
-        }
-      }
-    ),
-    filterableColumns.length > 0 && /* @__PURE__ */ jsxs2(Popover, { children: [
-      /* @__PURE__ */ jsx3(PopoverTrigger, { children: /* @__PURE__ */ jsx3(Button, { size: "sm", startContent: /* @__PURE__ */ jsx3(FilterIcon, { size: 18 }), variant: "flat", children: "Filtros" }) }),
-      /* @__PURE__ */ jsx3(PopoverContent, { className: "min-w-[300px] flex flex-col gap-4", children: filterableColumns.map((column) => /* @__PURE__ */ jsx3(
-        CheckboxGroup,
-        {
-          label: column.name,
-          value: state.filterParams[column.uid] ? Array.from(state.filterParams[column.uid]) : Array.from(
-            column?.filterOptions?.reduce(
-              (acc, option) => acc.add(option.value),
-              /* @__PURE__ */ new Set()
-              // inicializa com um Set vazio
-            ) ?? /* @__PURE__ */ new Set(),
-            // se não tiver nenhum valor, retorna um Set vazio
-            (option) => option.value
-          ),
-          onChange: (value) => {
-            dispatch?.({
-              type: "SET_FILTER_PARAM",
-              payload: {
-                field: column.uid,
-                value: new Set(value)
-              }
-            });
-            dispatch?.({ type: "SET_PAGES", payload: 1 });
-          },
-          children: column?.filterOptions?.map((option) => /* @__PURE__ */ jsx3(Checkbox, { value: option.value, children: option.label ?? option.value }, option.value))
-        },
-        column.uid
-      )) })
-    ] }),
-    /* @__PURE__ */ jsxs2(Dropdown, { children: [
-      /* @__PURE__ */ jsx3(DropdownTrigger, { className: "hidden sm:flex", children: /* @__PURE__ */ jsx3(Button, { size: "sm", startContent: /* @__PURE__ */ jsx3(Columns3, { size: 18 }), variant: "flat", children: "Colunas" }) }),
+  return /* @__PURE__ */ jsxs2("div", { className: "flex flex-col gap-4", children: [
+    /* @__PURE__ */ jsxs2("div", { className: "flex gap-3 flex-grow", children: [
+      /* @__PURE__ */ jsxs2("div", { className: "flex flex-col gap-2 items-center", children: [
+        /* @__PURE__ */ jsx3(
+          Switch,
+          {
+            defaultSelected: selectionMode,
+            size: "sm",
+            onValueChange: () => dispatch?.({
+              type: "SET_SELECTION_MODE",
+              payload: !selectionMode
+            })
+          }
+        ),
+        /* @__PURE__ */ jsx3("span", { className: "text-xs check", children: "Modo selecionar" })
+      ] }),
       /* @__PURE__ */ jsx3(
-        DropdownMenu,
+        Input,
         {
-          disallowEmptySelection: true,
-          "aria-label": "Table Columns",
-          closeOnSelect: false,
-          selectedKeys: visibleColumns,
-          selectionMode: "multiple",
-          onSelectionChange: setVisibleColumns,
-          children: columns.map((column) => /* @__PURE__ */ jsx3(DropdownItem, { children: column.name }, column.uid))
+          isClearable: true,
+          className: "w-full sm:max-w-[25%]",
+          placeholder: "Pesquisar...",
+          size: "sm",
+          startContent: /* @__PURE__ */ jsx3(SearchIcon, {}),
+          onClear: () => dispatch?.({ type: "CLEAR_FILTER" }),
+          onValueChange: (value) => {
+            debouncedSearch?.(value);
+            dispatch?.({ type: "SET_PAGES", payload: 1 });
+          }
+        }
+      ),
+      filterableColumns.length > 0 && /* @__PURE__ */ jsxs2(
+        Popover,
+        {
+          classNames: {
+            content: "min-w-[300px] flex flex-col items-start gap-4 py-4 px-4"
+          },
+          size: "sm",
+          children: [
+            /* @__PURE__ */ jsx3(PopoverTrigger, { children: /* @__PURE__ */ jsx3(Button, { size: "sm", startContent: /* @__PURE__ */ jsx3(FilterIcon, { size: 18 }), variant: "flat", children: "Filtros" }) }),
+            /* @__PURE__ */ jsx3(PopoverContent, { children: filterableColumns.map((column) => /* @__PURE__ */ jsx3(
+              CheckboxGroup,
+              {
+                classNames: {
+                  label: "capitalize text-sm"
+                },
+                label: column.name,
+                value: state.filterParams[column.uid] ? Array.from(state.filterParams[column.uid]) : Array.from(
+                  column.filterOptions.map(
+                    (option) => option.value
+                  )
+                ),
+                onChange: (value) => {
+                  dispatch?.({
+                    type: "SET_FILTER_PARAM",
+                    payload: {
+                      field: column.uid,
+                      value: new Set(value)
+                    }
+                  });
+                  dispatch?.({ type: "SET_PAGES", payload: 1 });
+                },
+                children: column?.filterOptions?.map((option) => /* @__PURE__ */ jsx3(
+                  Checkbox,
+                  {
+                    value: option.value,
+                    classNames: {
+                      label: "text-sm "
+                    },
+                    children: option.label ?? option.value
+                  },
+                  option.value
+                ))
+              },
+              column.uid
+            )) })
+          ]
+        }
+      ),
+      /* @__PURE__ */ jsxs2(Dropdown, { children: [
+        /* @__PURE__ */ jsx3(DropdownTrigger, { className: "hidden sm:flex", children: /* @__PURE__ */ jsx3(Button, { size: "sm", startContent: /* @__PURE__ */ jsx3(Columns3, { size: 18 }), variant: "flat", children: "Colunas" }) }),
+        /* @__PURE__ */ jsx3(
+          DropdownMenu,
+          {
+            disallowEmptySelection: true,
+            "aria-label": "Table Columns",
+            closeOnSelect: false,
+            selectedKeys: visibleColumns,
+            selectionMode: "multiple",
+            onSelectionChange: setVisibleColumns,
+            children: columns.map((column) => /* @__PURE__ */ jsx3(DropdownItem, { children: column.name }, column.uid))
+          }
+        )
+      ] })
+    ] }),
+    /* @__PURE__ */ jsxs2("div", { className: "flex justify-between items-center", children: [
+      /* @__PURE__ */ jsxs2("span", { className: "text-default-400 text-small", children: [
+        "Total ",
+        total,
+        " registros"
+      ] }),
+      /* @__PURE__ */ jsx3(
+        Select,
+        {
+          className: "max-w-48",
+          classNames: {
+            label: "text-default-400 text-small"
+          },
+          label: "Linhas por p\xE1gina",
+          labelPlacement: "outside-left",
+          selectedKeys: [state.rowsPerPage.toString()],
+          selectionMode: "single",
+          size: "sm",
+          onChange: (e) => dispatch?.({
+            type: "SET_ROWS_PER_PAGE",
+            payload: Number(e.target.value)
+          }),
+          children: ["5", "10", "15", "20", "25", "30", "35", "40", "50", "60", "70", "80", "90", "100"].map(
+            (size) => /* @__PURE__ */ jsx3(SelectItem, { children: size }, size.toString())
+          )
         }
       )
     ] })
@@ -386,17 +451,15 @@ function TablePagination({
   rowsPerPage,
   selectedKeys,
   setPage,
-  onSelectAllChange
+  onSelectAllChange,
+  selectionMode
 }) {
   const totalPages = Math.ceil(total / rowsPerPage);
   const selectedCount = selectedKeys === "all" ? total : selectedKeys.size;
   const isAllSelected = selectedKeys === "all" || selectedCount === total;
   const isIndeterminate = selectedKeys !== "all" && selectedCount > 0 && selectedCount < total;
   return /* @__PURE__ */ jsxs3("div", { className: "flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-2 text-sm text-default-400", children: [
-    /* @__PURE__ */ jsxs3("span", { children: [
-      "Total de registros: ",
-      /* @__PURE__ */ jsx4("strong", { className: "text-default-600", children: total })
-    ] }),
+    /* @__PURE__ */ jsx4("span", { className: "w-[30%] text-small text-default-400", children: selectionMode && (selectedKeys === "all" ? "All items selected" : `${selectedKeys.size} de ${total} selecionado${selectedKeys.size > 1 ? "s" : ""}`) }),
     /* @__PURE__ */ jsxs3("div", { className: "flex items-center gap-4", children: [
       onSelectAllChange && /* @__PURE__ */ jsx4(
         Checkbox2,
@@ -410,17 +473,14 @@ function TablePagination({
       /* @__PURE__ */ jsx4(
         Pagination,
         {
+          isCompact: true,
           size: "sm",
           showControls: true,
+          showShadow: true,
+          color: "primary",
           total: totalPages,
           page,
-          onChange: setPage,
-          classNames: {
-            cursor: "bg-foreground text-background",
-            item: "text-default-500"
-          },
-          radius: "full",
-          variant: "flat"
+          onChange: setPage
         }
       )
     ] })
@@ -545,8 +605,11 @@ function useTable({
   });
   const sortedItems = useSorting ? useSorting(items, state.sortDescriptor) : items;
   const totalPages = Math.ceil(totalCount / state.rowsPerPage);
+  function isFilterableColumn(col) {
+    return col.filterable === true && Array.isArray(col.filterOptions);
+  }
   const filterableColumns = useMemo3(
-    () => headerColumns.filter((col) => col.filterable),
+    () => headerColumns.filter(isFilterableColumn),
     [headerColumns]
   );
   const topContent = useMemo3(
@@ -560,6 +623,7 @@ function useTable({
         setVisibleColumns,
         dispatch,
         debouncedSearch,
+        total: totalCount,
         selectionMode,
         addNewItem,
         addNewItemComponent
@@ -583,6 +647,7 @@ function useTable({
         page: state.page,
         rowsPerPage: state.rowsPerPage,
         setPage: (p) => dispatch({ type: "SET_PAGE", payload: p }),
+        selectionMode,
         selectedKeys
       }
     ),
