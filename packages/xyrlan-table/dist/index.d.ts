@@ -3,7 +3,7 @@ import React$1, { PropsWithChildren } from 'react';
 import { Key } from '@react-types/shared';
 
 interface Column<T = any> {
-    uid: keyof T | "actions";
+    uid: keyof T | "actions" | (string & {});
     name: string;
     sortable?: boolean;
     filterable?: boolean;

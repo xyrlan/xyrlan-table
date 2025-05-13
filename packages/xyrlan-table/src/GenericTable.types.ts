@@ -2,7 +2,7 @@ import { Key } from "@react-types/shared";
 import { Dispatch, ReactNode } from "react";
 
 export interface Column<T = any> {
-  uid: keyof T | "actions";
+  uid: keyof T | "actions" | (string & {});
   name: string;
   sortable?: boolean;
   filterable?: boolean;
