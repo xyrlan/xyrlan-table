@@ -346,135 +346,125 @@ function TableToolbar({
   addNewItemComponent,
   selectionMode
 }) {
-  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex flex-col gap-4", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-3 flex-grow", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex flex-col gap-2 items-center", children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-          import_switch.Switch,
-          {
-            defaultSelected: selectionMode,
-            size: "sm",
-            onValueChange: () => dispatch?.({
-              type: "SET_SELECTION_MODE",
-              payload: !selectionMode
-            })
-          }
-        ),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-xs check", children: "Modo selecionar" })
-      ] }),
+  return /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex gap-3 flex-grow", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex flex-col gap-2 items-center", children: [
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        import_input.Input,
+        import_switch.Switch,
         {
-          isClearable: true,
-          className: "w-full sm:max-w-[25%]",
-          placeholder: "Pesquisar...",
+          defaultSelected: selectionMode,
           size: "sm",
-          startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.SearchIcon, {}),
-          onClear: () => dispatch?.({ type: "CLEAR_FILTER" }),
-          onValueChange: (value) => {
-            debouncedSearch?.(value);
-            dispatch?.({ type: "SET_PAGES", payload: 1 });
-          }
+          onValueChange: () => dispatch?.({
+            type: "SET_SELECTION_MODE",
+            payload: !selectionMode
+          })
         }
       ),
-      filterableColumns.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
-        import_popover.Popover,
-        {
-          classNames: {
-            content: "min-w-[300px] flex flex-col items-start gap-4 py-4 px-4"
-          },
-          size: "sm",
-          children: [
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.FilterIcon, { size: 18 }), variant: "flat", children: "Filtros" }) }),
-            /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverContent, { children: filterableColumns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-              import_checkbox.CheckboxGroup,
-              {
-                classNames: {
-                  label: "capitalize text-sm"
-                },
-                label: column.name,
-                value: state.filterParams[column.uid] ? Array.from(state.filterParams[column.uid]) : Array.from(
-                  column.filterOptions.map(
-                    (option) => option.value
-                  )
-                ),
-                onChange: (value) => {
-                  dispatch?.({
-                    type: "SET_FILTER_PARAM",
-                    payload: {
-                      field: column.uid,
-                      value: new Set(value)
-                    }
-                  });
-                  dispatch?.({ type: "SET_PAGES", payload: 1 });
-                },
-                children: column?.filterOptions?.map((option) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-                  import_checkbox.Checkbox,
-                  {
-                    value: option.value,
-                    classNames: {
-                      label: "text-sm "
-                    },
-                    children: option.label ?? option.value
-                  },
-                  option.value
-                ))
-              },
-              column.uid
-            )) })
-          ]
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_dropdown.Dropdown, { children: [
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownTrigger, { className: "hidden sm:flex", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.Columns3, { size: 18 }), variant: "flat", children: "Colunas" }) }),
-        /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-          import_dropdown.DropdownMenu,
-          {
-            disallowEmptySelection: true,
-            "aria-label": "Table Columns",
-            closeOnSelect: false,
-            selectedKeys: visibleColumns,
-            selectionMode: "multiple",
-            onSelectionChange: setVisibleColumns,
-            children: columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownItem, { children: column.name }, column.uid))
-          }
-        )
-      ] })
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)("span", { className: "text-xs check", children: "Modo selecionar" })
     ] }),
-    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("div", { className: "flex justify-between items-center", children: [
-      /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)("span", { className: "text-default-400 text-small", children: [
-        "Total ",
-        total,
-        " registros"
-      ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      import_input.Input,
+      {
+        isClearable: true,
+        className: "w-full sm:max-w-[25%]",
+        placeholder: "Pesquisar...",
+        size: "sm",
+        startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.SearchIcon, {}),
+        onClear: () => dispatch?.({ type: "CLEAR_FILTER" }),
+        onValueChange: (value) => {
+          debouncedSearch?.(value);
+          dispatch?.({ type: "SET_PAGES", payload: 1 });
+        }
+      }
+    ),
+    filterableColumns.length > 0 && /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(
+      import_popover.Popover,
+      {
+        classNames: {
+          content: "min-w-[300px] flex flex-col items-start gap-4 py-4 px-4"
+        },
+        size: "sm",
+        children: [
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverTrigger, { children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.FilterIcon, { size: 18 }), variant: "flat", children: "Filtros" }) }),
+          /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_popover.PopoverContent, { children: filterableColumns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+            import_checkbox.CheckboxGroup,
+            {
+              classNames: {
+                label: "capitalize text-sm"
+              },
+              label: column.name,
+              value: state.filterParams[column.uid] ? Array.from(state.filterParams[column.uid]) : Array.from(
+                column.filterOptions.map(
+                  (option) => option.value
+                )
+              ),
+              onChange: (value) => {
+                dispatch?.({
+                  type: "SET_FILTER_PARAM",
+                  payload: {
+                    field: column.uid,
+                    value: new Set(value)
+                  }
+                });
+                dispatch?.({ type: "SET_PAGES", payload: 1 });
+              },
+              children: column?.filterOptions?.map((option) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+                import_checkbox.Checkbox,
+                {
+                  value: option.value,
+                  classNames: {
+                    label: "text-sm "
+                  },
+                  children: option.label ?? option.value
+                },
+                option.value
+              ))
+            },
+            column.uid
+          )) })
+        ]
+      }
+    ),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsxs)(import_dropdown.Dropdown, { children: [
+      /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownTrigger, { className: "hidden sm:flex", children: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_button.Button, { size: "sm", startContent: /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_lucide_react.Columns3, { size: 18 }), variant: "flat", children: "Colunas" }) }),
       /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
-        import_select.Select,
+        import_dropdown.DropdownMenu,
         {
-          className: "max-w-48",
-          classNames: {
-            label: "text-default-400 text-small"
-          },
-          label: "Linhas por p\xE1gina",
-          labelPlacement: "outside-left",
-          selectedKeys: [state.rowsPerPage.toString()],
-          selectionMode: "single",
-          size: "sm",
-          onChange: (e) => dispatch?.({
-            type: "SET_ROWS_PER_PAGE",
-            payload: Number(e.target.value)
-          }),
-          children: ["5", "10", "15", "20", "25", "30", "35", "40", "50", "60", "70", "80", "90", "100"].map(
-            (size) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_select.SelectItem, { children: size }, size.toString())
-          )
+          disallowEmptySelection: true,
+          "aria-label": "Table Columns",
+          closeOnSelect: false,
+          selectedKeys: visibleColumns,
+          selectionMode: "multiple",
+          onSelectionChange: setVisibleColumns,
+          children: columns.map((column) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_dropdown.DropdownItem, { children: column.name }, column.uid))
         }
       )
-    ] })
+    ] }),
+    /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(
+      import_select.Select,
+      {
+        className: "max-w-56",
+        classNames: {
+          label: "text-default-400 text-small"
+        },
+        label: "Linhas por p\xE1gina",
+        labelPlacement: "outside-left",
+        selectedKeys: [state.rowsPerPage.toString()],
+        selectionMode: "single",
+        size: "sm",
+        onChange: (e) => dispatch?.({
+          type: "SET_ROWS_PER_PAGE",
+          payload: Number(e.target.value)
+        }),
+        children: ["5", "10", "15", "20", "25", "30", "35", "40", "50", "60", "70", "80", "90", "100"].map(
+          (size) => /* @__PURE__ */ (0, import_jsx_runtime3.jsx)(import_select.SelectItem, { children: size }, size.toString())
+        )
+      }
+    )
   ] });
 }
 
 // src/components/TablePagination.tsx
 var import_pagination = require("@heroui/pagination");
-var import_checkbox2 = require("@heroui/checkbox");
 var import_jsx_runtime4 = require("react/jsx-runtime");
 function TablePagination({
   total,
@@ -482,38 +472,27 @@ function TablePagination({
   rowsPerPage,
   selectedKeys,
   setPage,
-  onSelectAllChange,
   selectionMode
 }) {
   const totalPages = Math.ceil(total / rowsPerPage);
-  const selectedCount = selectedKeys === "all" ? total : selectedKeys.size;
-  const isAllSelected = selectedKeys === "all" || selectedCount === total;
-  const isIndeterminate = selectedKeys !== "all" && selectedCount > 0 && selectedCount < total;
-  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between p-2 text-sm text-default-400", children: [
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: "w-[30%] text-small text-default-400", children: selectionMode && (selectedKeys === "all" ? "All items selected" : `${selectedKeys.size} de ${total} selecionado${selectedKeys.size > 1 ? "s" : ""}`) }),
-    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex items-center gap-4", children: [
-      onSelectAllChange && /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        import_checkbox2.Checkbox,
-        {
-          isSelected: isAllSelected,
-          isIndeterminate,
-          onChange: onSelectAllChange,
-          children: "Selecionar todos"
-        }
-      ),
-      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
-        import_pagination.Pagination,
-        {
-          isCompact: true,
-          size: "sm",
-          showControls: true,
-          showShadow: true,
-          color: "primary",
-          total: totalPages,
-          page,
-          onChange: setPage
-        }
-      )
+  return /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("div", { className: "flex gap-4 sm:flex-row sm:items-center sm:justify-between p-2 text-sm text-default-400", children: [
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("span", { className: " text-small text-default-400", children: selectionMode && (selectedKeys === "all" ? "All items selected" : `${selectedKeys.size} de ${total} selecionado${selectedKeys.size > 1 ? "s" : ""}`) }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("div", { className: "flex items-center gap-4", children: /* @__PURE__ */ (0, import_jsx_runtime4.jsx)(
+      import_pagination.Pagination,
+      {
+        isCompact: true,
+        size: "sm",
+        showControls: true,
+        showShadow: true,
+        color: "primary",
+        total: totalPages,
+        page,
+        onChange: setPage
+      }
+    ) }),
+    /* @__PURE__ */ (0, import_jsx_runtime4.jsxs)("span", { children: [
+      "Total de registros: ",
+      /* @__PURE__ */ (0, import_jsx_runtime4.jsx)("strong", { className: " text-small text-default-400", children: total })
     ] })
   ] });
 }
@@ -635,7 +614,6 @@ function useTable({
     url: `${baseUrl}${endpoint}?queryCriteria=${JSON.stringify(queryCriteria)}`
   });
   const sortedItems = useSorting ? useSorting(items, state.sortDescriptor) : items;
-  const totalPages = Math.ceil(totalCount / state.rowsPerPage);
   function isFilterableColumn(col) {
     return col.filterable === true && Array.isArray(col.filterOptions);
   }

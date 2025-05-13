@@ -105,9 +105,6 @@ export function useTable<T>({
   // 4) Ordenação cliente (caso queira override) ou manter ordem do servidor
   const sortedItems = useSorting ? useSorting(items, state.sortDescriptor) : items;
 
-  // 5) Quantidade de páginas
-  const totalPages = Math.ceil(totalCount / state.rowsPerPage);
-
   // 6) Filtros disponíveis
   function isFilterableColumn<T>(col: Column<T>): col is FilterableColumn<T> {
     return col.filterable === true && Array.isArray(col.filterOptions);
