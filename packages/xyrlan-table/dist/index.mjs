@@ -270,7 +270,6 @@ function useTableData(opts) {
     url,
     fetcher
   );
-  console.log(result);
   return {
     items: result?.data ?? [],
     totalCount: result?.paging?.totalCount ?? 0,

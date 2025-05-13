@@ -11,21 +11,11 @@ export function useTableData<T>(opts: {
   const {
     url, customProvider
   } = opts;
-
-  // const provider = customProvider
-  //   ? customProvider
-  //   : createDefaultDataProvider<T>(endpoint!, baseUrl);
-
-  // const key = ["table-data",
-  //   page, perPage, sortDescriptor, filterParams, searchParam
-  // ];
-
+  
   const { data: result, error, mutate, isValidating } = useSWR(
     url,
     fetcher<T>
   );
-
-  console.log(result);
 
   return {
     items: result?.data ?? [] as T[],
